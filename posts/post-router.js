@@ -81,22 +81,35 @@ router.get("/:post_id/comments", (req, res) => {
 
 //POST creat new post using data from request body
 router.post("/", (req, res) => {
-  Posts.add(req.body)
-    .then(item => {
-      res.status(201).json(item);
-    })
-    .catch(error => {
-      // log error to database
-      console.log(error);
-      res.status(500).json({
-        message: "Error adding the post"
+  const { title, contents } = req.body;
+  if (!title || !contents) {
+    res
+      .status(400)
+      .json({ errMsg: "Please provide title and contents for the post." });
+  } else {
+    Posts.insert(req.body)
+      .then(item => {
+        res.status(201).json({ item: req.body });
+      })
+      .catch(error => {
+        // log error to database
+        console.log(error);
+        res.status(500).json({
+          errMsg: "There was an error while saving the post to the database"
+        });
       });
-    });
+  }
 });
 
 //POST creat new comment for specified post using data from request body
-router.post("/", (req, res) => {
-  Posts.add(req.body)
+router.post("/:id/comments", (req, res) => {
+  const { text, post_id } = req.body;
+  if (!text || !post_id) {
+    res
+      .status(404)
+      .json({ errMsg: "The post with the specified ID does not exist." });
+  }
+  Posts.insertComment(req.body)
     .then(item => {
       res.status(201).json(item);
     })
@@ -134,7 +147,7 @@ router.put("/:id", (req, res) => {
   Posts.update(req.params.id, changes)
     .then(item => {
       if (item) {
-        res.status(200).json({ changes });
+        res.status(200).json({ item: changes });
       } else {
         res.status(404).json({ message: "The post could not be found" });
       }
