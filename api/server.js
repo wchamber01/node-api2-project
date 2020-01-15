@@ -1,5 +1,5 @@
 const express = require("express");
-const router = require("../blogs/blog-router");
+const router = require("../posts/post-router");
 const server = express();
 
 server.use(express.json());
@@ -10,6 +10,6 @@ server.get("/", (req, res) => {
   `);
 });
 
-server.use("/api/blogs", router);
+server.use("/api/posts", router);
 
 module.exports = server;
