@@ -134,7 +134,7 @@ router.put("/:id", (req, res) => {
   Posts.update(req.params.id, changes)
     .then(item => {
       if (item) {
-        res.status(200).json(item);
+        res.status(200).json({ changes });
       } else {
         res.status(404).json({ message: "The post could not be found" });
       }
